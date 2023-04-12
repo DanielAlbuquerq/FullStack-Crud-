@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import { toast } from "react-toastify";
+import {Link} from "react-router-dom";
 
 const FormContainer = styled.form`
   display: flex;
@@ -46,10 +47,10 @@ const Form = ({ getUsers, onEdit, setOnEdit }) => {
     if (onEdit) {
       const user = ref.current;
 
-      user.nome.value = onEdit.nome;
-      user.email.value = onEdit.email;
-      user.fone.value = onEdit.fone;
-      user.data_nascimento.value = onEdit.data_nascimento;
+      user.sku.value = onEdit.sku;
+      user.name.value = onEdit.name;
+      user.price.value = onEdit.price;
+      user.typeproduct.value = onEdit.typeproduct;
     }
   }, [onEdit]);
 
@@ -59,10 +60,10 @@ const Form = ({ getUsers, onEdit, setOnEdit }) => {
     const user = ref.current;
 
     if (
-      !user.nome.value ||
-      !user.email.value ||
-      !user.fone.value ||
-      !user.data_nascimento.value
+      !user.sku.value ||
+      !user.name.value ||
+      !user.price.value ||
+      !user.typeproduct.value
     ) {
       return toast.warn("Preencha todos os campos!");
     }
@@ -70,55 +71,64 @@ const Form = ({ getUsers, onEdit, setOnEdit }) => {
     if (onEdit) {
       await axios
         .put("http://localhost:8800/" + onEdit.id, {
-          nome: user.nome.value,
-          email: user.email.value,
-          fone: user.fone.value,
-          data_nascimento: user.data_nascimento.value,
+          sku: user.sku.value,
+          name: user.name.value,
+          price: user.price.value,
+          typeproduct: user.typeproduct.value,
         })
         .then(({ data }) => toast.success(data))
         .catch(({ data }) => toast.error(data));
     } else {
       await axios
         .post("http://localhost:8800", {
-          nome: user.nome.value,
-          email: user.email.value,
-          fone: user.fone.value,
-          data_nascimento: user.data_nascimento.value,
+          sku: user.sku.value,
+          name: user.name.value,
+          price: user.price.value,
+          typeproduct: user.typeproduct.value,
         })
         .then(({ data }) => toast.success(data))
         .catch(({ data }) => toast.error(data));
     }
 
-    user.nome.value = "";
-    user.email.value = "";
-    user.fone.value = "";
-    user.data_nascimento.value = "";
+    user.sku.value = "";
+    user.name.value = "";
+    user.price.value = "";
+    user.typeproduct.value = "";
 
     setOnEdit(null);
     getUsers();
   };
 
   return (
+
+    <div>
+      <div className="links">
+        <Link to="/">
+
+        </Link>
+
+      </div>
     <FormContainer ref={ref} onSubmit={handleSubmit}>
       <InputArea>
-        <Label>Nome</Label>
-        <Input name="nome" />
+        <Label>SKU</Label>
+        <Input name="sku" />
       </InputArea>
       <InputArea>
-        <Label>E-mail</Label>
-        <Input name="email" type="email" />
+        <Label>Name</Label>
+        <Input name="name" type="name" />
       </InputArea>
       <InputArea>
-        <Label>Telefone</Label>
-        <Input name="fone" />
+        <Label>Price</Label>
+        <Input name="price" />
       </InputArea>
       <InputArea>
-        <Label>Data de Nascimento</Label>
-        <Input name="data_nascimento" type="date" />
+        <Label>Tipo do produto</Label>
+        <Input name="typeproduct" type="name" />
       </InputArea>
 
       <Button type="submit">SALVAR</Button>
     </FormContainer>
+    </div>
   );
 };
 

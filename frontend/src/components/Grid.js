@@ -1,12 +1,12 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import axios from "axios";
 import styled from "styled-components";
-import { FaTrash, FaEdit } from "react-icons/fa";
 import { toast } from "react-toastify";
+import {Link} from "react-router-dom";
 
 const Table = styled.table`
   width: 100%;
-  background-color: #fff;
+  background-color: #ff0000;
   padding: 20px;
   box-shadow: 0px 0px 5px #ccc;
   border-radius: 5px;
@@ -42,53 +42,71 @@ export const Td = styled.td`
 `;
 
 const Grid = ({ users, setUsers, setOnEdit }) => {
-  const handleEdit = (item) => {
-    setOnEdit(item);
-  };
+  
+  // const handleChange = (e) =>{
+  //   const {name, checked} = e.target;
 
-  const handleDelete = async (id) => {
-    await axios
-      .delete("http://localhost:8800/" + id)
-      .then(({ data }) => {
-        const newArray = users.filter((user) => user.id !== id);
+  //   const checkedvalue = users.map((user) => 
+  //   user.sku ===name? {...user, isCheked:checked}: user);
+  //   console.log(name)
+   
+  //   setUsers(checkedvalue);
+  // }
 
-        setUsers(newArray);
-        toast.success(data);
-      })
-      .catch(({ data }) => toast.error(data));
 
-    setOnEdit(null);
-  };
+const [isChecked, setisChecked]=useState([]);
+
+const handlecheckbox = (e) => {
+  const {value, checked} = e.target
+  if(checked)
+  {
+    setisChecked([...isChecked, value]);
+  } else{
+    setisChecked(isChecked.filter((e) => e!== value))
+  }
+  console.log(e.target)
+}
+
+const alldelete = async (value) => {
+  await axios
+    .delete("http://localhost:8800/" + value)
+    .then(({ data }) => {
+      const newArray = users.filter((item) => item.sku !== value);
+
+      setUsers(newArray);
+      
+      toast.success(data);
+    })
+    .catch(({ data }) => toast.error(data));
+
+  setOnEdit(null);
+};
 
   return (
-    <Table>
-      <Thead>
-        <Tr>
-          <Th>Nome</Th>
-          <Th>Email</Th>
-          <Th onlyWeb>Fone</Th>
-          <Th></Th>
-          <Th></Th>
-        </Tr>
-      </Thead>
-      <Tbody>
-        {users.map((item, i) => (
-          <Tr key={i}>
-            <Td width="30%">{item.nome}</Td>
-            <Td width="30%">{item.email}</Td>
-            <Td width="20%" onlyWeb>
-              {item.fone}
-            </Td>
-            <Td alignCenter width="5%">
-              <FaEdit onClick={() => handleEdit(item)} />
-            </Td>
-            <Td alignCenter width="5%">
-              <FaTrash onClick={() => handleDelete(item.id)} />
-            </Td>
-          </Tr>
+    <div>
+    <div className="links">
+        <Link to="/productadded">
+          <button > ADD </button>
+        </Link>
+        
+        <button onClick={alldelete(isChecked)}> MASS DELETE </button>
+      </div>
+     
+        {users.map((item, index) => (
+        <>
+        {/* <button onClick={() => handleDelete()}> DELETE</button> */}
+
+        <input type="checkbox" value={item.sku} checked={item.isChecked} onChange={(e) => handlecheckbox(e)}/>
+        <ul>
+          <li key={item.sku}>
+            {item.sku}
+            {item.name}
+            {item.price}
+          </li>  
+        </ul>  
+        </>  
         ))}
-      </Tbody>
-    </Table>
+    </div>
   );
 };
 

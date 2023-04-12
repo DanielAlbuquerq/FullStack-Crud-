@@ -1,7 +1,7 @@
 import { db } from "../db.js";
 
 export const getUsers = (_, res) => {
-  const q = "SELECT * FROM usuarios";
+  const q = "SELECT * FROM products";
 
   db.query(q, (err, data) => {
     if (err) return res.json(err);
@@ -12,13 +12,13 @@ export const getUsers = (_, res) => {
 
 export const addUser = (req, res) => {
   const q =
-    "INSERT INTO usuarios(`nome`, `email`, `fone`, `data_nascimento`) VALUES(?)";
+    "INSERT INTO products(`sku`, `name`, `price`, `typeproduct`) VALUES(?)";
 
   const values = [
-    req.body.nome,
-    req.body.email,
-    req.body.fone,
-    req.body.data_nascimento,
+    req.body.sku,
+    req.body.name,
+    req.body.price,
+    req.body.typeproduct,
   ];
 
   db.query(q, [values], (err) => {
@@ -30,16 +30,16 @@ export const addUser = (req, res) => {
 
 export const updateUser = (req, res) => {
   const q =
-    "UPDATE usuarios SET `nome` = ?, `email` = ?, `fone` = ?, `data_nascimento` = ? WHERE `id` = ?";
+    "UPDATE products SET `sku` = ?, `name` = ?, `price` = ?, `typeproduct` = ? WHERE `sku` = ?";
 
   const values = [
-    req.body.nome,
-    req.body.email,
-    req.body.fone,
-    req.body.data_nascimento,
+    req.body.sku,
+    req.body.name,
+    req.body.price,
+    req.body.typeproduct,
   ];
 
-  db.query(q, [...values, req.params.id], (err) => {
+  db.query(q, [...values, req.params.sku], (err) => {
     if (err) return res.json(err);
 
     return res.status(200).json("Usuário atualizado com sucesso.");
@@ -47,9 +47,9 @@ export const updateUser = (req, res) => {
 };
 
 export const deleteUser = (req, res) => {
-  const q = "DELETE FROM usuarios WHERE `id` = ?";
+  const q = "DELETE FROM products WHERE `sku` = ?";
 
-  db.query(q, [req.params.id], (err) => {
+  db.query(q, [req.params.sku], (err) => {
     if (err) return res.json(err);
 
     return res.status(200).json("Usuário deletado com sucesso.");
